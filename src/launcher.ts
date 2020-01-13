@@ -87,13 +87,11 @@ export class Launcher {
         this.app.use(httpContext.middleware);
 
         this.app.use(function (req, res, next) {
-            if (req.path.includes("/sg/membre-inscription")) {
-                if (queryStringify(req.query).length > 0) {
-                    res.locals.urlPath = req.path + "?" + queryStringify(req.query);
-                }
-                else {
-                    res.locals.urlPath = req.path;
-                }
+            if (queryStringify(req.query).length > 0) {
+                res.locals.urlPath = req.path + "?" + queryStringify(req.query);
+            }
+            else {
+                res.locals.urlPath = req.path;
             }
             next();
         });
