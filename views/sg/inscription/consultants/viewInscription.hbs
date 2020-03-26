@@ -233,16 +233,10 @@
                                   Titre de séjour
                                 {{else if (eq this "documentCVEC")}}
                                   CVEC
-                                {{else if (eq this "documentRIB")}}
-                                  RIB
                                 {{/if}}
                               </div>
                               <div class="col-md-3">
-                                {{#if (ne @root.action "create")}}
-                                  <input type="file" name="file">
-                                {{else}}
-                                  <input type="file" name="{{this}}">
-                                {{/if}}
+                                <input type="file" name="{{this}}">
                               </div>
                             </div>
                           {{/each}}

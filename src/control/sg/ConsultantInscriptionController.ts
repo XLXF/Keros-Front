@@ -76,7 +76,7 @@ export class ConsultantInscriptionController {
                     if (err3) return next(err3);
                     const documents = [
                         "documentIdentity", "documentScolaryCertificate", "documentRIB", "documentVitaleCard",
-                        "documentResidencePermit", "documentCVEC", "documentRIB"
+                        "documentResidencePermit", "documentCVEC"
                     ];
                     const options = {
                         departments,
@@ -182,13 +182,33 @@ export class ConsultantInscriptionController {
         inscriptionRequest.address = addressRequest;
 
         if (req.files !== undefined) {
-            winston.debug("files : " + JSON.stringify(req.files));
-            // inscriptionRequest.documentIdentity = <UploadedFile>req.files.documentIdentity;
-            // inscriptionRequest.documentResidencePermit = <UploadedFile>req.files.documentResidencePermit;
-            // inscriptionRequest.documentRIB = <UploadedFile>req.files.documentRIB;
-            // inscriptionRequest.documentScolarityCertificate = <UploadedFile>req.files.documentScolarityCertificate;
-            // inscriptionRequest.documentVitaleCard = <UploadedFile>req.files.documentVitaleCard;
-            // inscriptionRequest.documentCVEC = <UploadedFile>req.files.documentCVEC;
+            if (req.files.documentIdentity) {
+                winston.debug("document identity defined");
+                inscriptionRequest.addDocumentIdentity(<UploadedFile>req.files.documentIdentity);
+            }
+            if (req.files.documentCVEC) {
+                winston.debug("documentCVEC defined");
+                inscriptionRequest.addDocumentCVEC(<UploadedFile>req.files.documentCVEC);
+            }
+            if (req.files.documentResidencePermit) {
+                winston.debug("documentResidencePermit defined");
+                inscriptionRequest.addDocumentResidencePermit(<UploadedFile>req.files.documentResidencePermit);
+            }
+            if (req.files.documentRIB) {
+                winston.debug("documentRIB defined");
+                inscriptionRequest.addDocumentRIB(<UploadedFile>req.files.documentRIB);
+            }
+            if (req.files.documentScolarityCertificate) {
+                winston.debug("documentScolarityCertificate defined"); // not defined dunno why
+                inscriptionRequest.addDocumentScolarityCertificate(<UploadedFile>req.files.documentScolarityCertificate);
+            }
+            else {
+                winston.debug("documentScolarityCertificate NOT defined ");
+            }
+            if (req.files.documentVitaleCard) {
+                winston.debug("documentVitaleCard defined");
+                inscriptionRequest.addDocumentVitaleCard(<UploadedFile>req.files.documentVitaleCard);
+            }
         }
 
         if (id) {
@@ -200,6 +220,7 @@ export class ConsultantInscriptionController {
                 res.redirect("/sg/consultant-inscription");
             });
         } else {
+            inscriptionRequest.fillFormData();
             ConsultantInscriptionService.createConsultantInscription(inscriptionRequest, function (err) {
                 if (err) {
                     return next(err);

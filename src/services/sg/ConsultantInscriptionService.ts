@@ -11,6 +11,9 @@ import { queryStringify } from "../../util/Helper";
 import { Config } from "../../config/Config";
 import * as FormData from "form-data";
 import { UploadedFile } from "express-fileupload";
+import { ConsultantCreateRequest } from "../../models/core/ConsultantCreateRequest";
+import { Consultant } from "../../models/core/Consultant";
+import Base = Mocha.reporters.Base;
 
 export class ConsultantInscriptionService extends BaseService {
     static getConsultantInscription(id: number, callback: (err: any, result: ConsultantInscription | null) => void): void {
@@ -43,35 +46,34 @@ export class ConsultantInscriptionService extends BaseService {
     }
 
     static createConsultantInscription(consultantInscriptionRequest: ConsultantInscriptionCreateRequest, callback: (err: any, result: ConsultantInscription | null) => void): void {
-      // const formData = new FormData();
-      // const fs = require("fs");
-      // const filePath = "./";
-      // file.mv(filePath + file.name)
-      //   .then(value => {
-      //     uploadFile();
-      //   })
-      //   .catch(e => winston.debug("Move file to local path failed" + e));
-      // const uploadFile = async () => {
-      //   const readStreamFS: ReadableStream = fs.createReadStream(filePath + file.name);
-      //   formData.append("file", readStreamFS, file.name);
-      //   const fetch = require("node-fetch");
-      //   const url = Config.getBackendBaseUrl() + "/sg/consultant-inscription/" + inscriptionId + "/document/" + documentTypeId;
-      //   await fetch(url, {
-      //     method: "POST",
-      //     headers: this.defaultHeaders().additionalHeaders,
-      //     body: formData
-      //   }).then((res: { status: number; message: string }) => {
-      //     fs.unlink(filePath + file.name, () => {
-      //       winston.debug("Temporarily uploaded file deleted");
-      //     });
-      //     if (res.status !== 201) {
-      //       winston.debug("Error while uploading file");
-      //       return callback(this.defaultError(res.status));
-      //     }
-      //     callback(null);
-      //   });
-      // };
+      const fetch = require("node-fetch");
+      const url = Config.getBackendBaseUrl() + "/sg/consultant-inscription/";
+      fetch(url, {
+        method: "POST",
+        headers: BaseService.defaultHeaders().additionalHeaders,
+        body: consultantInscriptionRequest.formData
+      }).then((res: IRestResponse<ConsultantInscription>) => {
+        if (res.statusCode !== 201) {
+          winston.debug("Error while uploading file");
+          return callback(BaseService.defaultError(res.statusCode), null);
+        }
+        callback(null, res.result);
+      });
     }
+
+  // static createConsultantInscription(consultantInscriptionRequest: ConsultantInscriptionCreateRequest, callback: (err: any, result: Consultant | null) => void): void {
+  //   this.rest.create<Consultant>("core/consultant-inscription", consultantInscriptionRequest, this.defaultHeaders()).then(
+  //     (res: IRestResponse<Consultant>) => {
+  //       if (res.statusCode !== 201) {
+  //         return callback(this.defaultError(res.statusCode), null);
+  //       }
+  //       winston.debug("Response : " + JSON.stringify(res));
+  //       callback(null, res.result);
+  //     }
+  //   ).catch(
+  //     e => callback(e, null)
+  //   );
+  // }
 
     static update(id: number, consultantInscriptionRequest: ConsultantInscriptionCreateRequest, callback: (err: any, result: ConsultantInscription | null) => void): void {
         this.rest.update<ConsultantInscription>("sg/consultant-inscription/" + id, consultantInscriptionRequest, this.defaultHeaders()).then(

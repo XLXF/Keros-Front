@@ -3,7 +3,7 @@ import { AddressCreateRequest } from "../core/AddressCreateRequest";
 import { UploadedFile } from "express-fileupload";
 import * as winston from "winston";
 import * as FormData from "form-data";
-import {Config} from "../../config/Config";
+import { Config } from "../../config/Config";
 
 export class ConsultantInscriptionCreateRequest implements IStringable {
     public addFirstNameToFormData(value: string) {
@@ -137,6 +137,7 @@ export class ConsultantInscriptionCreateRequest implements IStringable {
         }
     }
     private setDocument(file: UploadedFile) {
+        winston.debug(file.name);
         const fs = require("fs");
         const filePath = "./";
         file.mv(filePath + file.name)
@@ -148,11 +149,15 @@ export class ConsultantInscriptionCreateRequest implements IStringable {
             const readStreamFS: ReadableStream = fs.createReadStream(filePath + file.name);
             if (this.formData) {
                 this.formData.append(file.name, readStreamFS, file.name);
+                // winston.debug(JSON.stringify(this.formData));
             }
             else {
                 winston.debug("form data not defined");
             }
         };
+        fs.unlink(filePath + file.name, () => {
+            winston.debug("Temporarily uploaded file " + file.name + " deleted");
+        });
     }
 
     public addDocumentIdentity(value: UploadedFile) {
