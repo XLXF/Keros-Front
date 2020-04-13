@@ -3,6 +3,7 @@ import { Router } from "express";
 import { MemberController } from "./MemberController";
 import { ConsultantController } from "./ConsultantController";
 import { secureRouter } from "../secureRouter";
+import { AdvancedSearchController } from "./advancedSearchController";
 
 /**
  * Router for core endpoints*
@@ -13,6 +14,7 @@ export function coreRouter(): Router {
   winston.debug("Mapping Core routes");
   const memberController: MemberController = new MemberController();
   const consultantController: ConsultantController = new ConsultantController();
+  const advancedSearchController: AdvancedSearchController = new  AdvancedSearchController();
   const router: Router = Router();
   secureRouter(router);
   // members
@@ -38,5 +40,6 @@ export function coreRouter(): Router {
   router.get("/consultant/delete/:id(\\d+)/", consultantController.deleteConsultant);
   router.get("/consultant/json", consultantController.getJSONConsultants);
   router.post("/consultant/exportCSV", consultantController.exportCSVConsultants);
+  router.get("/advanced-search", advancedSearchController.advancedSearch);
   return router;
 }
